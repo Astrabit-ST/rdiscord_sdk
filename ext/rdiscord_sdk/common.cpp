@@ -14,3 +14,7 @@ Object rb_common_get_proc(int args) {
     rb_ary_push(rb_oProcArray, proc);
     return proc;
 }
+
+VALUE rb_result_to_obj(discord::Result result) {
+    return INT2NUM((int) result);
+}

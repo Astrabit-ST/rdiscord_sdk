@@ -9,4 +9,5 @@
 using namespace Rice;
 
 Object rb_common_get_proc(int args);
+VALUE rb_result_to_obj(discord::Result);
 extern VALUE rb_oProcArray;

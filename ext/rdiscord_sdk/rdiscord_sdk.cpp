@@ -1,5 +1,6 @@
 #include "rdiscord_sdk.h"
 #include "common.h"
+#include "gem_activity_manager.h"
 
 using namespace Rice;
 
@@ -14,7 +15,7 @@ Object rb_core_initialize(long client_id, long flags) {
     discord::Core* core;
     auto result = discord::Core::Create(client_id, flags, &core);
     DiscordSDK.core.reset(core);
-    return INT2NUM((int) result);
+    return rb_result_to_obj(result);
 }
 
 void rb_core_log_hook(discord::LogLevel minLevel, const char* message) {
@@ -43,7 +44,7 @@ Object rb_core_set_log_hook(int loglevel) {
 
 Object rb_core_run_callbacks() {
     CHECK_CORE_INITIALIZED;
-    return INT2NUM((int) DiscordSDK.core->RunCallbacks());
+    return rb_result_to_obj(DiscordSDK.core->RunCallbacks());
 }
 
 extern "C"
@@ -55,4 +56,6 @@ void Init_rdiscord_sdk()
     rb_mDiscord.define_module_function("set_log_hook", &rb_core_set_log_hook);
     rb_mDiscord.define_module_function("run_callbacks", &rb_core_run_callbacks);
     rb_global_variable(&rb_oProcArray);
+
+    rb_activity_init_manager(rb_mDiscord);
 }
