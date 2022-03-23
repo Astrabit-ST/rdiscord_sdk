@@ -1,6 +1,7 @@
 #include "rdiscord_sdk.h"
 #include "common.h"
 #include "gem_activity_manager.h"
+#include "activity.h"
 
 using namespace Rice;
 
@@ -58,4 +59,5 @@ void Init_rdiscord_sdk()
     rb_global_variable(&rb_oProcArray);
 
     rb_activity_init_manager(rb_mDiscord);
+    rb_activity_init_class(rb_mDiscord);
 }
