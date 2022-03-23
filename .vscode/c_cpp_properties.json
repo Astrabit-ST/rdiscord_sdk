@@ -4,7 +4,8 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "C:\\Ruby31-x64\\**"
+                "C:\\Ruby31-x64\\**",
+                "D:\\Git\\rdiscord_sdk\\third-party\\**"
             ],
             "defines": [
                 "_DEBUG",
