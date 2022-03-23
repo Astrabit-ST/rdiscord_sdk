@@ -1,7 +1,6 @@
 #include <rice/rice.hpp>
 #include "rdiscord_sdk.h"
 
-extern "C"
 using namespace Rice;
 
 Object initialize(Object /*self */, long client_id, long flags) {
@@ -13,6 +12,7 @@ Object initialize(Object /*self */, long client_id, long flags) {
     return INT2NUM((int) result);
 }
 
+extern "C"
 void Init_rdiscord_sdk()
 {
     Module rb_mDiscord = define_module("Discord");
