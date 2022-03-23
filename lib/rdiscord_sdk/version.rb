@@ -1,4 +1,4 @@
-module DiscordGameSDK
+module Discord
   VERSION = "0.1.1"
   DISCORD_VERSION = "2"
   DISCORD_APPLICATION_MANAGER_VERSION = "1"

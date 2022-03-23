@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module DiscordGameSDK
+module Discord
   module Result
     Ok = 0
     ServiceUnavailable = 1
