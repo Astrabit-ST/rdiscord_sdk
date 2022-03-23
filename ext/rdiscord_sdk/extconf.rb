@@ -7,8 +7,6 @@ def add_flags(type, flags)
     $CFLAGS << " #{flags} "
   when :ld
     $LDFLAGS << " #{flags} "
-  when :inc
-    $INCFLAGS << " #{flags} "
   end
 end
 
@@ -24,11 +22,32 @@ LIBRARY_DIR = if RUBY_PLATFORM.start_with?("x86_64") or RUBY_PLATFORM.start_with
 
 add_flags(:ld, "-L#{LIBRARY_DIR}")
 add_flags(:ld, "-Wl,-R. -Wl,-R./lib")
-add_flags(:ld, "-l:discord_game_sdk#{RUBY_PLATFORM.end_with?("linux") ? ".so" : ".dll"}")
-add_flags(:inc, "-I#{HEADER_DIR}")
+add_flags(:ld, "-l:discord_game_sdk#{RUBY_PLATFORM.end_with?("linux") ? ".so" : ".dll.lib"}")
 $LDFLAGS.gsub!(/\n/, " ")
+
+# Grab all discord source files because ruby is dumb
+
+discord_srcs = Dir.glob("#{THIRDPARTY_DIR}/**/*.cpp").map { |path| File.basename(path) }
+Dir.glob("#{THIRDPARTY_DIR}/*/") do |path|
+  puts path
+  dir = File.basename(path)
+  $VPATH << "#{THIRDPARTY_DIR}/#{dir}"
+  $INCFLAGS << " -I#{THIRDPARTY_DIR}/#{dir}"
+end
+ext_srcs = Dir.glob("#{$srcdir}/**/*.cpp").map { |path| File.basename(path) }
+Dir.glob("#{$srcdir}/*/") do |path|
+  dir = File.basename(path)
+  next if excluded.include?(dir)
+  $VPATH << "$(srcdir)/#{dir}"
+  $INCFLAGS << " -I$(srcdir)/#{dir}"
+end
+
+$srcs = discord_srcs + ext_srcs
 
 puts "LDFLAGS: #{$LDFLAGS}"
 puts "CFLAGS: #{$CFLAGS}"
+puts "VPATH: #{$VPATH}"
+puts "INCFLAGS: #{$INCFLAGS}"
+puts "SRCS: #{$srcs}"
 
 create_makefile("rdiscord_sdk")
