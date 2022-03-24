@@ -14,16 +14,16 @@ namespace Rice::detail {
         static bool verify() {
             return true;
         }
-    } 
+    };
     template<>
     class To_Ruby<discord::ActivityType>
     {
         public:
         VALUE convert(const discord::ActivityType& type)
         {
-            VALUE res;
+            return rb_int_new((int)type);
         }
-    }
+    };
 }
 
 void rb_activity_init_class(Module module) {
