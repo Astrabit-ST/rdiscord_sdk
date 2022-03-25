@@ -96,10 +96,6 @@ Object rb_activity_set_instance(Object self, bool instance) {
     activity->SetInstance(instance);
 
     return Qnil;
-<<<<<<< HEAD
->>>>>>> a2c3201 (Activity binding)
-=======
->>>>>>> a2c3201 (Activity binding)
 }
 
 void rb_activity_init_class(Module module) {
