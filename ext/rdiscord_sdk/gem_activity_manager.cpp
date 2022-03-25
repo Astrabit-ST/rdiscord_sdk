@@ -1,5 +1,6 @@
 #include "gem_activity_manager.h"
 #include "common.h"
+#include "activity.h"
 #include <discord.h>
 
 using namespace Rice;
@@ -23,6 +24,9 @@ Object rb_activity_manager_register_steam(int steam_id) {
 Object rb_discord_manager_update_activity(Object activity) {
     CHECK_CORE_INITIALIZED;
     Object callback = rb_common_get_proc(1);
+    GUARD_EXC(
+        GET_ACTIVITY(activity);
+    );
     return Qnil;
 }
 
