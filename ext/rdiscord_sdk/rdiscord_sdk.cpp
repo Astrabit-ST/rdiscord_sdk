@@ -9,7 +9,7 @@ VALUE rb_oProcArray;
 Module rb_mDiscord;
 DiscordStruct DiscordSDK;
 
-Object rb_core_initialize(long client_id, long flags) {
+Object rb_core_initialize(long long client_id, long flags) {
     if (DiscordSDK.core) {
         rb_raise(rb_eRuntimeError, "Discord already initialized!");
     }

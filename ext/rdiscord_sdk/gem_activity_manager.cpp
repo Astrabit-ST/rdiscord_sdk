@@ -21,12 +21,16 @@ Object rb_activity_manager_register_steam(int steam_id) {
     );
 }
 
-Object rb_discord_manager_update_activity(Object activity) {
+Object rb_activity_manager_update_activity(Object rb_activity) {
     CHECK_CORE_INITIALIZED;
-    Object callback = rb_common_get_proc(1);
-    GUARD_EXC(
-        GET_ACTIVITY(activity);
+    Object callback_proc = rb_common_get_proc(1);
+    
+    GET_ACTIVITY(rb_activity);
+    DiscordSDK.core->ActivityManager().UpdateActivity(
+        *activity,
+        rb_discord_callback_wrapper_basic(callback_proc)
     );
+
     return Qnil;
 }
 
@@ -40,4 +44,8 @@ void rb_activity_init_manager(Module module) {
             "register_steam",
             &rb_activity_manager_register_steam
         );
+    rb_mActivityManager.define_module_function(
+            "update_activity",
+            &rb_activity_manager_update_activity
+    );
 }

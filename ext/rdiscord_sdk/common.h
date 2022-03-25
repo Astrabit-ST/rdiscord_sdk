@@ -44,3 +44,5 @@ klass.define_method(#name "=", &rb_##subclass##_set_##name);
 Object rb_common_get_proc(int args);
 VALUE rb_result_to_obj(discord::Result);
 extern VALUE rb_oProcArray;
+
+std::function<void(discord::Result)> rb_discord_callback_wrapper_basic(Object proc);
