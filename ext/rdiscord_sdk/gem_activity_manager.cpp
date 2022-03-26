@@ -23,7 +23,7 @@ Object rb_activity_manager_register_steam(int steam_id) {
 
 Object rb_activity_manager_update_activity(Object rb_activity) {
     CHECK_CORE_INITIALIZED;
-    Object callback_proc = rb_common_get_proc(1);
+    VALUE callback_proc = rb_common_get_proc(1);
     
     auto fn = rb_discord_callback_wrapper_basic(callback_proc);
 

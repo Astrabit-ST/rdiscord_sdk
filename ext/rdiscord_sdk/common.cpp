@@ -4,12 +4,12 @@
 
 using namespace Rice;
 
-Object rb_common_get_proc(int args) {
+VALUE rb_common_get_proc(int args) {
     if (!rb_block_given_p())
     {
         return Qnil;
     }
-    Object proc = rb_block_proc();
+    VALUE proc = rb_block_proc();
     if (rb_proc_arity(proc) != args) {
         rb_raise(rb_eRuntimeError, "Passed block should take %d arguments, got %d instead", args, rb_proc_arity(proc));
     }
@@ -27,27 +27,29 @@ VALUE rb_discord_call_callback(VALUE ary) {
 }
 
 /*  Discord's C++ API doesn't have callback data, so this is the easiest way (i could think of) to make a callback know what proc it has */
-std::function<void(discord::Result)> rb_discord_callback_wrapper_basic(Object proc) {
-    if (!proc.is_a(rb_cProc)) {
-        rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", proc.class_name());
+std::function<void(discord::Result)> rb_discord_callback_wrapper_basic(VALUE proc) {
+    if (!rb_obj_is_kind_of(proc, rb_cProc)) {
+        rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", rb_obj_classname(proc));
     }
-
-    proc.call("call", "hi the fuck");
     
-    std::function<void(discord::Result)> fn = [&](discord::Result result){
+    std::function<void(discord::Result)> fn = [proc](discord::Result result){
         if ((VALUE) proc == Qnil)
             return;
 
-        VALUE exception = rb_sprintf("[DiscordGameSDK] PROC ", proc.class_of());
-        fwrite(StringValuePtr(exception), 1, RSTRING_LEN(exception), stderr);
-        rb_set_errinfo(Qnil);
-
-        if (!proc.is_a(rb_cProc)) {
-            rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", proc.class_name());
+        if (!rb_obj_is_kind_of(proc, rb_cProc)) {
+            rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", rb_obj_classname(proc));
         }
 
         rb_ary_delete(rb_oProcArray, proc);
-        proc.call("call", (int) result);
+        VALUE ary = rb_ary_new_from_args(2, proc, INT2NUM((int) result));
+        int state;
+        rb_protect(rb_discord_call_callback, ary, &state);
+        if (state) {
+            /* callback function broke, theres not much we can do other than print out an error */
+            VALUE exception = rb_sprintf("[DiscordGameSDK] Callback function error: %" PRIsVALUE, rb_errinfo());
+            fwrite(StringValuePtr(exception), 1, RSTRING_LEN(exception), stderr);
+            rb_set_errinfo(Qnil);
+        }
     };
     return fn;
 }
