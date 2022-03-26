@@ -2,6 +2,8 @@
 
 #include <rice/rice.hpp>
 #include "rdiscord_sdk.h"
+#include "discord.h"
+#include "common.h"
 
 using namespace Rice;
 

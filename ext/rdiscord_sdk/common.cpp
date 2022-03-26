@@ -1,5 +1,6 @@
 #include "common.h"
 #include <functional>
+#include <iostream>
 
 using namespace Rice;
 
@@ -27,21 +28,26 @@ VALUE rb_discord_call_callback(VALUE ary) {
 
 /*  Discord's C++ API doesn't have callback data, so this is the easiest way (i could think of) to make a callback know what proc it has */
 std::function<void(discord::Result)> rb_discord_callback_wrapper_basic(Object proc) {
+    if (!proc.is_a(rb_cProc)) {
+        rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", proc.class_name());
+    }
+
+    proc.call("call", "hi the fuck");
+    
     std::function<void(discord::Result)> fn = [&](discord::Result result){
         if ((VALUE) proc == Qnil)
             return;
 
-        rb_ary_delete(rb_oProcArray, proc);
-        VALUE ary = rb_ary_new_from_args(2, proc, INT2NUM((int) result));
+        VALUE exception = rb_sprintf("[DiscordGameSDK] PROC ", proc.class_of());
+        fwrite(StringValuePtr(exception), 1, RSTRING_LEN(exception), stderr);
+        rb_set_errinfo(Qnil);
 
-            int state;
-        rb_protect(rb_discord_call_callback, ary, &state);
-        if (state) {
-            /* callback function broke, theres not much we can do other than print out an error */
-            VALUE exception = rb_sprintf("[DiscordGameSDK] Callback function error: %" PRIsVALUE, rb_errinfo());
-            fwrite(StringValuePtr(exception), 1, RSTRING_LEN(exception), stderr);
-            rb_set_errinfo(Qnil);
+        if (!proc.is_a(rb_cProc)) {
+            rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", proc.class_name());
         }
+
+        rb_ary_delete(rb_oProcArray, proc);
+        proc.call("call", (int) result);
     };
     return fn;
 }

@@ -29,6 +29,27 @@ static inline void setPrivateData(VALUE self, void *p) {
     } \
 }
 
+template <rb_data_type_t *rbType> static VALUE classAllocate(VALUE klass) {
+    return rb_data_typed_object_wrap(klass, 0, rbType);
+}
+
+template <class C> static void freeInstance(void *inst) {
+    delete static_cast<C *>(inst);
+}
+
+#define DEF_TYPE_FLAGS 0
+
+#define DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, Free, Typename) \
+rb_data_type_t Typename = {Name, {0, Free, 0, 0, 0}, 0, 0, DEF_TYPE_FLAGS}
+
+#define DEF_TYPE_CUSTOMTYPENAME(Klass, Typename) \
+DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, #Klass, freeInstance<Klass>, Typename)
+
+#define DEF_TYPE_CUSTOMNAME(Klass, Name) \
+DEF_TYPE_CUSTOMNAME_AND_FREE(Klass, Name, freeInstance<Klass>, Klass##_rbType)
+
+#define DEF_TYPE(Klass) DEF_TYPE_CUSTOMNAME(Klass, #Klass)
+
 using namespace Rice;
 
 #define DEF_METHOD_SET(klass, name, subclass) \

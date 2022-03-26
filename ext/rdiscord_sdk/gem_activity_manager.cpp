@@ -25,10 +25,12 @@ Object rb_activity_manager_update_activity(Object rb_activity) {
     CHECK_CORE_INITIALIZED;
     Object callback_proc = rb_common_get_proc(1);
     
+    auto fn = rb_discord_callback_wrapper_basic(callback_proc);
+
     GET_ACTIVITY(rb_activity);
     DiscordSDK.core->ActivityManager().UpdateActivity(
         *activity,
-        rb_discord_callback_wrapper_basic(callback_proc)
+        fn
     );
 
     return Qnil;

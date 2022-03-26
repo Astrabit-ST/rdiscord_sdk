@@ -21,8 +21,9 @@ LIBRARY_DIR = if RUBY_PLATFORM.start_with?("x86_64") or RUBY_PLATFORM.start_with
   end
 
 add_flags(:ld, "-L#{LIBRARY_DIR}")
-#add_flags(:ld, "-Wl,-R. -Wl,-R./lib")
+add_flags(:ld, "-Wl,-R. -Wl,-R./lib")
 add_flags(:ld, "-l:discord_game_sdk#{RUBY_PLATFORM.end_with?("linux") ? ".so" : ".dll.lib"}")
+add_flags(:c, "-g")
 $LDFLAGS.gsub!(/\n/, " ")
 
 # Grab all discord source files because ruby is dumb

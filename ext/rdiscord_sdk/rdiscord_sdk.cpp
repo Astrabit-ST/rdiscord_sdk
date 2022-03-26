@@ -57,6 +57,7 @@ void Init_rdiscord_sdk()
     rb_mDiscord.define_module_function("set_log_hook", &rb_core_set_log_hook);
     rb_mDiscord.define_module_function("run_callbacks", &rb_core_run_callbacks);
     rb_global_variable(&rb_oProcArray);
+    //rb_define_variable("$discord_procarray", &rb_oProcArray);
 
     rb_activity_init_manager(rb_mDiscord);
     rb_activity_init_class(rb_mDiscord);

@@ -7,6 +7,8 @@ using namespace Rice;
 
 Class rb_cActivity;
 
+DEF_TYPE_CUSTOMTYPENAME(discord::Activity, Activity_rbType);
+
 Object rb_activity_initialize(Object self) {
     discord::Activity* activity = new discord::Activity();
     setPrivateData(self, activity);
@@ -101,6 +103,7 @@ Object rb_activity_set_instance(Object self, bool instance) {
 void rb_activity_init_class(Module module) {
     rb_cActivity = define_class_under(module, "Activity");
     rb_cActivity.define_method("initialize", &rb_activity_initialize);
+    rb_define_alloc_func(rb_cActivity, classAllocate<&Activity_rbType>);
     DEF_METHOD_GET_SET(rb_cActivity, type, activity);
     DEF_METHOD_GET_SET(rb_cActivity, application_id, activity);
     DEF_METHOD_GET_SET(rb_cActivity, name, activity);
