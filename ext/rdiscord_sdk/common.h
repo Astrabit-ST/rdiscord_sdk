@@ -62,6 +62,10 @@ klass.define_method(#name "=", &rb_##subclass##_set_##name);
 klass.define_method(#name, &rb_##subclass##_get_##name); \
 klass.define_method(#name "=", &rb_##subclass##_set_##name);
 
+#define DEF_METHOD_EVENT(klass, name, subclass) \
+klass.define_module_function(#name "_connect", &rb_##subclass##_on_##name##_connect); \
+klass.define_module_function(#name "_disconect", &rb_##subclass##_on_##name##_disconnect);
+
 #define LOG_ERROR_IF_STATE \
 if (state) { \
     /* callback function broke, theres not much we can do other than print out an error */  \

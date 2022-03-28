@@ -91,7 +91,7 @@ Object rb_activity_manager_accept_invite(std::int64_t user_id) {
     return Qnil;
 }
 
-int rb_activity_on_activity_join_connect() {
+int rb_activity_manager_on_activity_join_connect() {
     CHECK_CORE_INITIALIZED;
 
     VALUE event_proc;
@@ -115,7 +115,7 @@ int rb_activity_on_activity_join_connect() {
     return token;
 }
 
-Object rb_activity_on_activity_join_disconnect(int token) {
+Object rb_activity_manager_on_activity_join_disconnect(int token) {
     CHECK_CORE_INITIALIZED;
 
     DiscordSDK.core->ActivityManager().OnActivityJoin.Disconnect(token);
@@ -154,12 +154,5 @@ void rb_activity_init_manager(Module module) {
             "accept_invite",
             &rb_activity_manager_accept_invite
     );
-    rb_mActivityManager.define_module_function(
-            "on_activity_join_connect",
-            &rb_activity_on_activity_join_connect
-    );
-    rb_mActivityManager.define_module_function(
-            "on_activity_join_disconnect",
-            &rb_activity_on_activity_join_disconnect
-    );
+    DEF_METHOD_EVENT(rb_mActivityManager, activity_join, activity_manager);
 }

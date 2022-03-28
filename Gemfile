@@ -8,3 +8,4 @@ gemspec
 gem "rake", "~> 13.0"
 gem "rice", "~> 4.0.3"
 gem "rubocop", "~> 1.21"
+gem "rake-compiler"
