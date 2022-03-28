@@ -62,8 +62,20 @@ klass.define_method(#name "=", &rb_##subclass##_set_##name);
 klass.define_method(#name, &rb_##subclass##_get_##name); \
 klass.define_method(#name "=", &rb_##subclass##_set_##name);
 
-VALUE rb_common_get_proc(int args);
-VALUE rb_result_to_obj(discord::Result);
-extern VALUE rb_oProcArray;
+#define LOG_ERROR_IF_STATE \
+if (state) { \
+    /* callback function broke, theres not much we can do other than print out an error */  \
+    VALUE exception = rb_sprintf("[DiscordGameSDK] Callback function error: %" PRIsVALUE, rb_errinfo()); \
+    fwrite(StringValuePtr(exception), 1, RSTRING_LEN(exception), stderr); \
+    rb_set_errinfo(Qnil); \
+}
 
+VALUE rb_common_get_callback_proc(int args);
+VALUE rb_common_get_event_proc(int args, VALUE key);
+
+VALUE rb_result_to_obj(discord::Result);
+extern VALUE rb_oPendingCallbacks;
+extern VALUE rb_oProcEvents;
+
+VALUE rb_discord_call_proc(VALUE ary);
 std::function<void(discord::Result)> rb_discord_callback_wrapper_basic(VALUE proc);

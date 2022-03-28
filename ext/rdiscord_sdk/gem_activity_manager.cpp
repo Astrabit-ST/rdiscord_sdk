@@ -1,7 +1,7 @@
 #include "gem_activity_manager.h"
 #include "common.h"
 #include "activity.h"
-#include <discord.h>
+#include "discord.h"
 
 using namespace Rice;
 
@@ -23,7 +23,7 @@ Object rb_activity_manager_register_steam(int steam_id) {
 
 Object rb_activity_manager_update_activity(Object rb_activity) {
     CHECK_CORE_INITIALIZED;
-    VALUE callback_proc = rb_common_get_proc(1);
+    VALUE callback_proc = rb_common_get_callback_proc(1);
     
     auto fn = rb_discord_callback_wrapper_basic(callback_proc);
 
@@ -32,6 +32,94 @@ Object rb_activity_manager_update_activity(Object rb_activity) {
         *activity,
         fn
     );
+
+    return Qnil;
+}
+
+Object rb_activity_manager_clear_activity() {
+    CHECK_CORE_INITIALIZED;
+    VALUE callback_proc = rb_common_get_callback_proc(1);
+
+    auto fn = rb_discord_callback_wrapper_basic(callback_proc);
+    DiscordSDK.core->ActivityManager().ClearActivity(fn);
+
+    return Qnil;
+}
+
+Object rb_activity_manager_send_request_reply(std::int64_t user_id, int reply) {
+    CHECK_CORE_INITIALIZED;
+    VALUE callback_proc = rb_common_get_callback_proc(1);
+
+    auto fn = rb_discord_callback_wrapper_basic(callback_proc);
+
+    DiscordSDK.core->ActivityManager().SendRequestReply(
+        user_id,
+        (discord::ActivityJoinRequestReply) reply,
+        fn
+    );
+
+    return Qnil;
+}
+
+Object rb_activity_manager_send_invite(std::int64_t user_id, int type, const char* content) {
+    CHECK_CORE_INITIALIZED;
+    VALUE callback_proc = rb_common_get_callback_proc(1);
+
+    auto fn = rb_discord_callback_wrapper_basic(callback_proc);
+
+    DiscordSDK.core->ActivityManager().SendInvite(
+        user_id,
+        (discord::ActivityActionType) type,
+        content,
+        fn
+    );
+
+    return Qnil;
+}
+
+Object rb_activity_manager_accept_invite(std::int64_t user_id) {
+    CHECK_CORE_INITIALIZED;
+    VALUE callback_proc = rb_common_get_callback_proc(1);
+
+    auto fn = rb_discord_callback_wrapper_basic(callback_proc);
+
+    DiscordSDK.core->ActivityManager().AcceptInvite(
+        user_id,
+        fn
+    );
+
+    return Qnil;
+}
+
+int rb_activity_on_activity_join_connect() {
+    CHECK_CORE_INITIALIZED;
+
+    VALUE event_proc;
+    int token = DiscordSDK.core->ActivityManager().OnActivityJoin.Connect(
+        [event_proc](const char* secret) {
+            if (event_proc == Qnil)
+                return;
+
+            if (!rb_obj_is_kind_of(event_proc, rb_cProc))
+                rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", rb_obj_classname(event_proc));
+
+            VALUE array = rb_ary_new_from_args(2, event_proc, rb_str_new_cstr(secret));
+            int state;
+            rb_protect(rb_discord_call_proc, array, &state);
+
+            LOG_ERROR_IF_STATE;
+        }
+    );
+    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_join" + token));
+
+    return token;
+}
+
+Object rb_activity_on_activity_join_disconnect(int token) {
+    CHECK_CORE_INITIALIZED;
+
+    DiscordSDK.core->ActivityManager().OnActivityJoin.Disconnect(token);
+    rb_hash_delete(rb_oProcEvents, Symbol("on_activity_join" + token)); // Delete event proc, we use hashes instead of arrays to delete specific entries
 
     return Qnil;
 }
@@ -49,5 +137,29 @@ void rb_activity_init_manager(Module module) {
     rb_mActivityManager.define_module_function(
             "update_activity",
             &rb_activity_manager_update_activity
+    );
+    rb_mActivityManager.define_module_function(
+            "clear_activity",
+            &rb_activity_manager_clear_activity
+    );
+    rb_mActivityManager.define_module_function(
+            "send_request_reply",
+            &rb_activity_manager_send_request_reply
+    );
+    rb_mActivityManager.define_module_function(
+            "send_invite",
+            &rb_activity_manager_send_invite
+    );
+    rb_mActivityManager.define_module_function(
+            "accept_invite",
+            &rb_activity_manager_accept_invite
+    );
+    rb_mActivityManager.define_module_function(
+            "on_activity_join_connect",
+            &rb_activity_on_activity_join_connect
+    );
+    rb_mActivityManager.define_module_function(
+            "on_activity_join_disconnect",
+            &rb_activity_on_activity_join_disconnect
     );
 }

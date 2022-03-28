@@ -5,7 +5,9 @@
 
 using namespace Rice;
 
-VALUE rb_oProcArray;
+VALUE rb_oPendingCallbacks;
+VALUE rb_oProcEvents;
+
 Module rb_mDiscord;
 DiscordStruct DiscordSDK;
 
@@ -30,10 +32,10 @@ void rb_core_log_hook(discord::LogLevel minLevel, const char* message) {
 Object rb_core_set_log_hook(int loglevel) {
     CHECK_CORE_INITIALIZED;
     if (DiscordSDK.log_hook) {
-        rb_ary_delete(rb_oProcArray, DiscordSDK.log_hook);
+        rb_hash_delete(rb_oProcEvents, rb_intern("log_hook"));
     }
 
-    DiscordSDK.log_hook = rb_common_get_proc(2);
+    DiscordSDK.log_hook = rb_common_get_event_proc(2, rb_intern("log_hook"));
     
     DiscordSDK.core->SetLogHook(
         (discord::LogLevel) loglevel,
@@ -51,13 +53,19 @@ Object rb_core_run_callbacks() {
 extern "C"
 void Init_rdiscord_sdk()
 {
-    rb_oProcArray = rb_ary_new();
+    rb_oPendingCallbacks = rb_ary_new();
+    rb_oProcEvents = rb_hash_new();
+
     rb_mDiscord = define_module("Discord");
     rb_mDiscord.define_module_function("init", &rb_core_initialize);
     rb_mDiscord.define_module_function("set_log_hook", &rb_core_set_log_hook);
     rb_mDiscord.define_module_function("run_callbacks", &rb_core_run_callbacks);
-    rb_global_variable(&rb_oProcArray);
-    //rb_define_variable("$discord_procarray", &rb_oProcArray);
+
+    rb_global_variable(&rb_oProcEvents);
+    rb_global_variable(&rb_oPendingCallbacks);
+
+    rb_gv_set("$discord_proc_events", rb_oProcEvents);
+    rb_gv_set("$discord_pending_callbacks", rb_oPendingCallbacks);
 
     rb_activity_init_manager(rb_mDiscord);
     rb_activity_init_class(rb_mDiscord);
