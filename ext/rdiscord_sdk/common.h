@@ -10,7 +10,7 @@
 template <class C> inline C *getPrivateData(VALUE self) {
     C *c = static_cast<C *>(RTYPEDDATA_DATA(self));
     if (!c) {
-        rb_raise(rb_eStandardError, "DATA_PTR for object missing data");
+        rb_raise(rb_eStandardError, "RTYPEDDATA_DATA for object missing data");
     }
     return c;
 }

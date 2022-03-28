@@ -124,6 +124,39 @@ Object rb_activity_manager_on_activity_join_disconnect(int token) {
     return Qnil;
 }
 
+int rb_activity_manager_on_activity_spectate_connect() {
+    CHECK_CORE_INITIALIZED;
+
+    VALUE event_proc;
+    int token = DiscordSDK.core->ActivityManager().OnActivitySpectate.Connect(
+        [event_proc](const char* secret) {
+            if (event_proc == Qnil)
+                return;
+
+            if (!rb_obj_is_kind_of(event_proc, rb_cProc))
+                rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", rb_obj_classname(event_proc));
+
+            VALUE array = rb_ary_new_from_args(2, event_proc, rb_str_new_cstr(secret));
+            int state;
+            rb_protect(rb_discord_call_proc, array, &state);
+
+            LOG_ERROR_IF_STATE;
+        }
+    );
+    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_spectate" + token));
+
+    return token;
+}
+
+Object rb_activity_manager_on_activity_spectate_disconnect(int token) {
+    CHECK_CORE_INITIALIZED;
+
+    DiscordSDK.core->ActivityManager().OnActivitySpectate.Disconnect(token);
+    rb_hash_delete(rb_oProcEvents, Symbol("on_activity_spectate" + token)); // Delete event proc, we use hashes instead of arrays to delete specific entries
+
+    return Qnil;
+}
+
 void rb_activity_init_manager(Module module) {
     rb_mActivityManager = define_module_under(module, "ActivityManager");
     rb_mActivityManager.define_module_function(
@@ -155,4 +188,5 @@ void rb_activity_init_manager(Module module) {
             &rb_activity_manager_accept_invite
     );
     DEF_METHOD_EVENT(rb_mActivityManager, activity_join, activity_manager);
+    DEF_METHOD_EVENT(rb_mActivityManager, activity_spectate, activity_manager);
 }

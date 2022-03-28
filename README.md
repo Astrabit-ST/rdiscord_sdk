@@ -116,7 +116,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 
 ### Data Classes
 
-- [ ] DiscordUser
+- [x] DiscordUser
 - [ ] DiscordOAuth2Token
 - [ ] DiscordImageHandle
 - [ ] DiscordImageDimensions

@@ -2,6 +2,7 @@
 #include "common.h"
 #include "gem_activity_manager.h"
 #include "activity.h"
+#include "user.h"
 
 using namespace Rice;
 
@@ -69,4 +70,5 @@ void Init_rdiscord_sdk()
 
     rb_activity_init_manager(rb_mDiscord);
     rb_activity_init_class(rb_mDiscord);
+    rb_user_init_class(rb_mDiscord);
 }
