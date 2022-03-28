@@ -1,6 +1,7 @@
 #include "gem_activity_manager.h"
 #include "common.h"
 #include "activity.h"
+#include "user.h"
 #include "discord.h"
 
 using namespace Rice;
@@ -152,7 +153,86 @@ Object rb_activity_manager_on_activity_spectate_disconnect(int token) {
     CHECK_CORE_INITIALIZED;
 
     DiscordSDK.core->ActivityManager().OnActivitySpectate.Disconnect(token);
-    rb_hash_delete(rb_oProcEvents, Symbol("on_activity_spectate" + token)); // Delete event proc, we use hashes instead of arrays to delete specific entries
+    rb_hash_delete(rb_oProcEvents, Symbol("on_activity_spectate" + token));
+
+    return Qnil;
+}
+
+int rb_activity_manager_on_activity_join_request_connect() {
+    CHECK_CORE_INITIALIZED;
+
+    VALUE event_proc;
+    int token = DiscordSDK.core->ActivityManager().OnActivityJoinRequest.Connect(
+        [event_proc](const discord::User &user) {
+            if (event_proc == Qnil)
+                return;
+            
+            if (!rb_obj_is_kind_of(event_proc, rb_cProc))
+                rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", rb_obj_classname(event_proc));
+
+            VALUE argv = rb_ary_new();
+            Object rb_user = rb_class_new_instance(0, &argv, rb_cUser);
+            setPrivateData(rb_user, (void*) &user);
+
+            VALUE array = rb_ary_new_from_args(2, event_proc, rb_user);
+            int state;
+            rb_protect(rb_discord_call_proc, array, &state);
+
+            LOG_ERROR_IF_STATE;
+        }
+    );
+    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_join_request" + token));
+
+    return token;
+}
+
+Object rb_activity_manager_on_activity_join_request_disconnect(int token) {
+    CHECK_CORE_INITIALIZED;
+
+    DiscordSDK.core->ActivityManager().OnActivityJoinRequest.Disconnect(token);
+    rb_hash_delete(rb_oProcEvents, Symbol("on_activity_join_request" + token));
+
+    return Qnil;
+}
+
+int rb_activity_manager_on_activity_invite_connect() {
+    CHECK_CORE_INITIALIZED;
+
+    VALUE event_proc;
+    int token = DiscordSDK.core->ActivityManager().OnActivityInvite.Connect(
+        [event_proc](discord::ActivityActionType action_type, const discord::User &user, const discord::Activity &activity) {
+            if (event_proc == Qnil)
+                return;
+
+            if (!rb_obj_is_kind_of(event_proc, rb_cProc))
+                rb_raise(rb_eTypeError, "Proc expected in callback, got %d instead", rb_obj_classname(event_proc));
+
+            VALUE argv = rb_ary_new();
+            Object rb_user = rb_class_new_instance(0, &argv, rb_cUser);
+            setPrivateData(rb_user, (void*) &user);
+
+            VALUE argv2 = rb_ary_new();
+            Object rb_activity = rb_class_new_instance(0, &argv2, rb_cActivity);
+            setPrivateData(rb_activity, (void*) &activity);
+
+            VALUE array = rb_ary_new_from_args(4, event_proc, rb_user, rb_activity, INT2NUM((int) action_type));
+            int state;
+            rb_protect(rb_discord_call_proc, array, &state);
+
+            LOG_ERROR_IF_STATE;
+        }
+    );
+    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_invite" + token));
+
+
+    return token;
+}
+
+Object rb_activity_manager_on_activity_invite_disconnect(int token) {
+    CHECK_CORE_INITIALIZED;
+
+    DiscordSDK.core->ActivityManager().OnActivityInvite.Disconnect(token);
+    rb_hash_delete(rb_oProcEvents, Symbol("on_activity_invite" + token));
 
     return Qnil;
 }
@@ -189,4 +269,6 @@ void rb_activity_init_manager(Module module) {
     );
     DEF_METHOD_EVENT(rb_mActivityManager, activity_join, activity_manager);
     DEF_METHOD_EVENT(rb_mActivityManager, activity_spectate, activity_manager);
+    DEF_METHOD_EVENT(rb_mActivityManager, activity_join_request, activity_manager);
+    DEF_METHOD_EVENT(rb_mActivityManager, activity_invite, activity_manager);
 }
