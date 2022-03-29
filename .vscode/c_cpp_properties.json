@@ -4,10 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/usr/local/lib/ruby/**",
-                "/usr/local/include/ruby-3.0.0/**",
+                // "/usr/local/lib/ruby/**",
+                // "/usr/local/include/ruby-3.0.0/**",
                 "C:\\Ruby31-x64\\**",
-                "D:\\Git\\rdiscord_sdk\\third-party\\**"
             ],
             "defines": [
                 "_DEBUG",

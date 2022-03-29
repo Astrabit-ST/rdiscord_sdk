@@ -3,6 +3,8 @@
 #include "rdiscord_sdk.h"
 #include <exception>
 
+#define BOOL2RB(val) ((val) ? Qtrue : Qfalse)
+
 #define CHECK_CORE_INITIALIZED \
     if (!DiscordSDK.core) \
         rb_raise(rb_eRuntimeError, "The Discord SDK core is not initialized!");
@@ -63,8 +65,8 @@ klass.define_method(#name, &rb_##subclass##_get_##name); \
 klass.define_method(#name "=", &rb_##subclass##_set_##name);
 
 #define DEF_METHOD_EVENT(klass, name, subclass) \
-klass.define_module_function(#name "_connect", &rb_##subclass##_on_##name##_connect); \
-klass.define_module_function(#name "_disconect", &rb_##subclass##_on_##name##_disconnect);
+klass.define_module_function("on_" #name "_connect", &rb_##subclass##_on_##name##_connect); \
+klass.define_module_function("on_" #name "_disconect", &rb_##subclass##_on_##name##_disconnect);
 
 #define LOG_ERROR_IF_STATE \
 if (state) { \
@@ -75,7 +77,8 @@ if (state) { \
 }
 
 VALUE rb_common_get_callback_proc(int args);
-VALUE rb_common_get_event_proc(int args, VALUE key);
+VALUE rb_common_get_event_proc(int args);
+void rb_common_add_proc_to_hash(VALUE key, VALUE proc);
 
 VALUE rb_result_to_obj(discord::Result);
 extern VALUE rb_oPendingCallbacks;

@@ -17,7 +17,7 @@ VALUE rb_common_get_callback_proc(int args) {
     return proc;
 }
 
-VALUE rb_common_get_event_proc(int args, VALUE key) {
+VALUE rb_common_get_event_proc(int args) {
     if (!rb_block_given_p())
     {
         return Qnil;
@@ -27,8 +27,11 @@ VALUE rb_common_get_event_proc(int args, VALUE key) {
     if (rb_proc_arity(proc) != args) {
         rb_raise(rb_eRuntimeError, "Passed block should take %d arguments, got %d instead", args, rb_proc_arity(proc));
     }
-    rb_hash_aset(rb_oProcEvents, key, proc);
     return proc;
+}
+
+void rb_common_add_proc_to_hash(VALUE key, VALUE proc) {
+    rb_hash_aset(rb_oProcEvents, key, proc);
 }
 
 VALUE rb_result_to_obj(discord::Result result) {

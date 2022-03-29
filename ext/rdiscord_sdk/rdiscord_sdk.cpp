@@ -3,6 +3,7 @@
 #include "gem_activity_manager.h"
 #include "activity.h"
 #include "user.h"
+#include "gem_user_manager.h"
 
 using namespace Rice;
 
@@ -33,10 +34,11 @@ void rb_core_log_hook(discord::LogLevel minLevel, const char* message) {
 Object rb_core_set_log_hook(int loglevel) {
     CHECK_CORE_INITIALIZED;
     if (DiscordSDK.log_hook) {
-        rb_hash_delete(rb_oProcEvents, rb_intern("log_hook"));
+        rb_hash_delete(rb_oProcEvents, Symbol("log_hook"));
     }
 
-    DiscordSDK.log_hook = rb_common_get_event_proc(2, rb_intern("log_hook"));
+    DiscordSDK.log_hook = rb_common_get_event_proc(2);
+    rb_common_add_proc_to_hash(Symbol("log_hook"), DiscordSDK.log_hook);
     
     DiscordSDK.core->SetLogHook(
         (discord::LogLevel) loglevel,
@@ -71,4 +73,5 @@ void Init_rdiscord_sdk()
     rb_activity_init_manager(rb_mDiscord);
     rb_activity_init_class(rb_mDiscord);
     rb_user_init_class(rb_mDiscord);
+    rb_user_init_manager(rb_mDiscord);
 }

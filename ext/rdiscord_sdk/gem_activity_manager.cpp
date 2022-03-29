@@ -95,7 +95,7 @@ Object rb_activity_manager_accept_invite(std::int64_t user_id) {
 int rb_activity_manager_on_activity_join_connect() {
     CHECK_CORE_INITIALIZED;
 
-    VALUE event_proc;
+    VALUE event_proc = rb_common_get_event_proc(1);
     int token = DiscordSDK.core->ActivityManager().OnActivityJoin.Connect(
         [event_proc](const char* secret) {
             if (event_proc == Qnil)
@@ -111,7 +111,7 @@ int rb_activity_manager_on_activity_join_connect() {
             LOG_ERROR_IF_STATE;
         }
     );
-    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_join" + token));
+    rb_common_add_proc_to_hash(Symbol("activity_join_connect" + token), event_proc);
 
     return token;
 }
@@ -128,7 +128,7 @@ Object rb_activity_manager_on_activity_join_disconnect(int token) {
 int rb_activity_manager_on_activity_spectate_connect() {
     CHECK_CORE_INITIALIZED;
 
-    VALUE event_proc;
+    VALUE event_proc = rb_common_get_event_proc(1);
     int token = DiscordSDK.core->ActivityManager().OnActivitySpectate.Connect(
         [event_proc](const char* secret) {
             if (event_proc == Qnil)
@@ -144,7 +144,7 @@ int rb_activity_manager_on_activity_spectate_connect() {
             LOG_ERROR_IF_STATE;
         }
     );
-    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_spectate" + token));
+    rb_common_add_proc_to_hash(Symbol("on_activity_spectate" + token), event_proc);
 
     return token;
 }
@@ -161,7 +161,7 @@ Object rb_activity_manager_on_activity_spectate_disconnect(int token) {
 int rb_activity_manager_on_activity_join_request_connect() {
     CHECK_CORE_INITIALIZED;
 
-    VALUE event_proc;
+    VALUE event_proc = rb_common_get_event_proc(1);
     int token = DiscordSDK.core->ActivityManager().OnActivityJoinRequest.Connect(
         [event_proc](const discord::User &user) {
             if (event_proc == Qnil)
@@ -181,7 +181,7 @@ int rb_activity_manager_on_activity_join_request_connect() {
             LOG_ERROR_IF_STATE;
         }
     );
-    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_join_request" + token));
+    rb_common_add_proc_to_hash(Symbol("on_activity_join_request" + token), event_proc);
 
     return token;
 }
@@ -198,7 +198,7 @@ Object rb_activity_manager_on_activity_join_request_disconnect(int token) {
 int rb_activity_manager_on_activity_invite_connect() {
     CHECK_CORE_INITIALIZED;
 
-    VALUE event_proc;
+    VALUE event_proc = rb_common_get_event_proc(1);
     int token = DiscordSDK.core->ActivityManager().OnActivityInvite.Connect(
         [event_proc](discord::ActivityActionType action_type, const discord::User &user, const discord::Activity &activity) {
             if (event_proc == Qnil)
@@ -222,8 +222,7 @@ int rb_activity_manager_on_activity_invite_connect() {
             LOG_ERROR_IF_STATE;
         }
     );
-    event_proc = rb_common_get_event_proc(1, Symbol("on_activity_invite" + token));
-
+    rb_common_add_proc_to_hash(Symbol("on_activity_invite" + token), event_proc);
 
     return token;
 }

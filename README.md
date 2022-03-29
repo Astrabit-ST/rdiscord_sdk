@@ -10,6 +10,10 @@ This means it's very difficult to understand how it works, what it does, and to 
 rdiscord_sdk is instead built in C++ meaning it's easier to abstract, and to modify the source. The name may be obtuse, but it sure as hell isn't internally.
 My goal is to provide extra levels of abstraction over ruby_discord_game_sdk, and provide full functionality as well. Wether that will happen, I'm not sure.
 
+## Disclaimer
+Some portions of code are untested because they can be extremely hard to test, namely events.
+Keep that in mind.
+
 ## Usage
 
 This gem (at the moment) exposes SDK functions without much abstraction, so as long as you can grasp C#, you should be able to transfer the example code to ruby code.
@@ -21,6 +25,18 @@ There are a couple of minor differences, such as the lack of a need to initializ
 - Callbacks are method blocks
 - Events are also method blocks
 - Pending callbacks and events are accessible
+- Some functions return an array, usually the result being at [0] and an object at [1] (such as Discord::UserManager.get_current_user)
+
+As mentioned above, some functions return arrays. An easy way to deal with these would be to:
+```rb
+result, user = Discord::UserManager.get_current_user
+```
+It's not the best, but it works. I don't want to discard a result, in case you ever want to know what went wrong.
+If you don't want the result, you can just do:
+```rb
+_, user = Discord::UserManager.get_current_user
+```
+`_` is widely understood as a dummy variable, so it's good practice to use it when you don't care about a specific return value.
 
 ## Callbacks & Events
 
@@ -138,7 +154,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 
 ### Managers implemented
 - [ ] ApplicationManager
-- [ ] UserManager
+- [x] UserManager
 - [ ] ImageManager
 - [x] ActivityManager
 - [ ] RelationshipManager
@@ -160,7 +176,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 - [ ] DiscordLobbyTransaction
 - [ ] DiscordLobbySearchQuery
 - [x] Events
-  - [ ] UserEvents
+  - [x] UserEvents
   - [x] ActivityEvents
   - [ ] RelationshipEvents
   - [ ] LobbyEvents
