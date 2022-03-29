@@ -26,6 +26,7 @@ There are a couple of minor differences, such as the lack of a need to initializ
 - Events are also method blocks
 - Pending callbacks and events are accessible
 - Some functions return an array, usually the result being at [0] and an object at [1] (such as Discord::UserManager.get_current_user)
+- Images will likely not be supported on many platforms aside from mkxp-z, as mkxp-z has the ability to create bitmaps from strings
 
 As mentioned above, some functions return arrays. An easy way to deal with these would be to:
 ```rb
