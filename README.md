@@ -161,7 +161,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 - [ ] RelationshipManager
 - [ ] LobbyManager
 - [ ] NetworkManager
-- [ ] OverlayManager
+- [x] OverlayManager
 - [ ] StorageManager
 - [ ] StoreManager
 - [ ] VoiceManager
@@ -182,7 +182,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
   - [ ] RelationshipEvents
   - [ ] LobbyEvents
   - [ ] NetworkEvents
-  - [ ] OverlayEvents
+  - [x] OverlayEvents
   - [ ] StoreEvents
   - [ ] VoiceEvents
   - [ ] AchievementEvents

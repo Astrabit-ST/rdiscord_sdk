@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "rdiscord_sdk"
-  spec.version = "1.1.0"
+  spec.version = "1.1.1"
   spec.authors = ["Matthew Lyons"]
   spec.email = ["matthew@nowaffles.com"]
 
