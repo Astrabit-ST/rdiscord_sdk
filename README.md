@@ -1,4 +1,4 @@
-# R(uby) Discord SDK
+# R(uby) Discord SDK ![Gem](https://img.shields.io/gem/v/rdiscord_sdk) ![Gem](https://img.shields.io/gem/dt/rdiscord_sdk)
 
 This is a Ruby gem that implements bindings to the [Discord Game SDK](https://discord.com/developers/docs/game-sdk/discord).
 It is intended to be used in [ModShot](https://github.com/Astrabit-ST/Modshot-Core), although will work in any ruby application.
