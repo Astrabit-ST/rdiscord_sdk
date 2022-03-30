@@ -64,6 +64,38 @@ klass.define_method(#name "=", &rb_##subclass##_set_##name);
 klass.define_method(#name, &rb_##subclass##_get_##name); \
 klass.define_method(#name "=", &rb_##subclass##_set_##name);
 
+#define DEF_METHOD_SET_BLAND(klass, name, subclass) \
+klass.define_method("set_" #name, &rb_##subclass##_set_##name);
+
+#define DEF_METHOD_GET_BLAND(klass, name, subclass) \
+klass.define_method("get_" #name, &rb_##subclass##_get_##name);
+
+#define DEF_METHOD_GET_SET_BLAND(klass, name, subclass) \
+klass.define_method("get_" #name, &rb_##subclass##_get_##name); \
+klass.define_method("set_" #name, &rb_##subclass##_set_##name);
+
+// Module functions
+
+#define DEF_MODULEFUNC_SET(klass, name, subclass) \
+klass.define_module_function(#name, &rb_##subclass##_get_##name);
+
+#define DEF_MODULEFUNC_GET(klass, name, subclass) \
+klass.define_module_function(#name "=", &rb_##subclass##_set_##name);
+
+#define DEF_MODULEFUNC_GET_SET(klass, name, subclass) \
+klass.define_module_function(#name, &rb_##subclass##_get_##name); \
+klass.define_module_function(#name "=", &rb_##subclass##_set_##name);
+
+#define DEF_MODULEFUNC_SET_BLAND(klass, name, subclass) \
+klass.define_module_function("set_" #name, &rb_##subclass##_set_##name);
+
+#define DEF_MODULEFUNC_GET_BLAND(klass, name, subclass) \
+klass.define_module_function("get_" #name, &rb_##subclass##_get_##name);
+
+#define DEF_MODULEFUNC_GET_SET_BLAND(klass, name, subclass) \
+klass.define_module_function("get_" #name, &rb_##subclass##_get_##name); \
+klass.define_module_function("set_" #name, &rb_##subclass##_set_##name);
+
 #define DEF_METHOD_EVENT(klass, name, subclass) \
 klass.define_module_function("on_" #name "_connect", &rb_##subclass##_on_##name##_connect); \
 klass.define_module_function("on_" #name "_disconect", &rb_##subclass##_on_##name##_disconnect);

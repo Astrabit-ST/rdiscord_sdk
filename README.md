@@ -28,6 +28,7 @@ There are a couple of minor differences, such as the lack of a need to initializ
 - Some functions return an array, usually the result being at [0] and an object at [1] (such as Discord::UserManager.get_current_user)
 - Images will likely not be supported on many platforms aside from mkxp-z, as mkxp-z has the ability to create bitmaps from strings
 - Some network manager events and methods return/take in an array of bytes (integers from 0-255, similar to a byte array in C#) rather than how you'd expect in C++
+- Set and get methods that take arguments (Like VoiceManager.get_local_mute) don't use the `value (getter), value = (setter)` format, and instead use `get_value (getter), set_value (setter)`
 
 As mentioned above, some functions return arrays. An easy way to deal with these would be to:
 ```rb
@@ -151,7 +152,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 - [ ] DiscordEntitlement
 - [ ] DiscordSkuPrive
 - [ ] DiscordSku
-- [ ] DiscordInputMode
+- [x] DiscordInputMode
 - [ ] DiscordUserAchievement
 
 ### Managers implemented
@@ -165,7 +166,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 - [x] OverlayManager
 - [ ] StorageManager
 - [ ] StoreManager
-- [ ] VoiceManager
+- [x] VoiceManager
 - [ ] AchievementManager
 
 ### Others
@@ -184,5 +185,5 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
   - [x] NetworkEvents
   - [x] OverlayEvents
   - [ ] StoreEvents
-  - [ ] VoiceEvents
+  - [x] VoiceEvents
   - [ ] AchievementEvents
