@@ -3,9 +3,30 @@
 #include "common.h"
 #include "discord.h"
 #include <cstdint>
-#include <iostream>
 
 Module rb_mNetworkManager;
+
+#ifdef WIN32
+namespace discord {
+    class NetworkManagerImpl {
+    public:
+        Result SendMessageA(NetworkPeerId peerId, // Stupid workaround
+                    NetworkChannelId channelId,
+                    std::uint8_t* data,
+                    std::uint32_t dataLength);
+    };
+
+    Result NetworkManager::SendMessageA(NetworkPeerId peerId,
+                                   NetworkChannelId channelId,
+                                   std::uint8_t* data,
+                                   std::uint32_t dataLength)
+    {
+        auto result = internal_->send_message(
+        internal_, peerId, channelId, reinterpret_cast<uint8_t*>(data), dataLength);
+        return static_cast<Result>(result);
+    }
+}
+#endif
 
 std::uint64_t rb_network_manager_get_peer_id() {
     CHECK_CORE_INITIALIZED;
