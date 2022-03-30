@@ -27,6 +27,7 @@ There are a couple of minor differences, such as the lack of a need to initializ
 - Pending callbacks and events are accessible
 - Some functions return an array, usually the result being at [0] and an object at [1] (such as Discord::UserManager.get_current_user)
 - Images will likely not be supported on many platforms aside from mkxp-z, as mkxp-z has the ability to create bitmaps from strings
+- Some network manager events and methods return/take in an array of bytes (integers from 0-255, similar to a byte array in C#) rather than how you'd expect in C++
 
 As mentioned above, some functions return arrays. An easy way to deal with these would be to:
 ```rb
@@ -160,7 +161,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 - [x] ActivityManager
 - [ ] RelationshipManager
 - [ ] LobbyManager
-- [ ] NetworkManager
+- [x] NetworkManager
 - [x] OverlayManager
 - [ ] StorageManager
 - [ ] StoreManager
@@ -168,9 +169,8 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
 - [ ] AchievementManager
 
 ### Others
-- [ ] Core functionality
+- [x] Core functionality
   - [x] Initialization
-  - [ ] Teardown
   - [x] Run callbacks
   - [x] Log hooks
 - [x] All enums
@@ -181,7 +181,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Speak2
   - [x] ActivityEvents
   - [ ] RelationshipEvents
   - [ ] LobbyEvents
-  - [ ] NetworkEvents
+  - [x] NetworkEvents
   - [x] OverlayEvents
   - [ ] StoreEvents
   - [ ] VoiceEvents

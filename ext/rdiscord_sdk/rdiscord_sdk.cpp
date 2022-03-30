@@ -5,6 +5,7 @@
 #include "user.h"
 #include "gem_user_manager.h"
 #include "gem_overlay_manager.h"
+#include "gem_network_manager.h"
 
 using namespace Rice;
 
@@ -76,4 +77,5 @@ void Init_rdiscord_sdk()
     rb_user_init_class(rb_mDiscord);
     rb_user_init_manager(rb_mDiscord);
     rb_overlay_init_manager(rb_mDiscord);
+    rb_network_init_manager(rb_mDiscord);
 }
