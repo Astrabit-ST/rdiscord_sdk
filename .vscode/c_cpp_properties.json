@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:\\Ruby31-x64\\**",
+                "C:\\tools\\ruby31\\include\\ruby-3.1.0",
                 "~/.rbenv/versions/3.1.1/**"
             ],
             "defines": [
@@ -13,7 +14,7 @@
                 "_UNICODE"
             ],
             "windowsSdkVersion": "10.0.19041.0",
-            "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64"
