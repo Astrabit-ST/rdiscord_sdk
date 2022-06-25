@@ -6,3 +6,4 @@
 /pkg/
 /spec/reports/
 /tmp/
+/lib/rdiscord_sdk/rdiscord_sdk.so
